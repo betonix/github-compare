@@ -8,7 +8,9 @@ import api from '../../services/api';
 export default class Main extends Component {
   state = {
     repositoriesInput: '',
-    repositories: [],
+    repositories: localStorage.getItem('repositories')
+      ? JSON.parse(localStorage.getItem('repositories'))
+      : [],
     repositoryError: false,
   };
 
@@ -21,10 +23,23 @@ export default class Main extends Component {
         repositoriesInput: '',
         repositories: [...this.state.repositories, repository],
       });
+
+      localStorage.setItem('repositories', JSON.stringify(this.state.repositories));
+
       this.setState({ repositoryError: false });
     } catch (err) {
       this.setState({ repositoryError: true });
     }
+  };
+
+  handleRemoveRepository = async (id) => {
+    const { repositories } = this.state;
+
+    const updatedRepositories = repositories.filter(repository => repository.id !== id);
+
+    this.setState({ repositories: updatedRepositories });
+
+    await localStorage.setItem('repositories', JSON.stringify(updatedRepositories));
   };
 
   render() {
@@ -40,7 +55,10 @@ export default class Main extends Component {
           />
           <button type="submit">OK</button>
         </Form>
-        <CompareList repositories={this.state.repositories} />
+        <CompareList
+          repositories={this.state.repositories}
+          removeRepository={this.handleRemoveRepository}
+        />
       </Container>
     );
   }

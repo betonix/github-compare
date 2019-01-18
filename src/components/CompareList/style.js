@@ -48,4 +48,9 @@ export const Repository = styled.div`
       }
     }
   }
+  .div-button {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
 `;
